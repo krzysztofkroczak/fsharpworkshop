@@ -1,8 +1,26 @@
 module Work
+open System
 
-type Customer = { Id : int ; IsVip : bool; Credit : decimal}
+[<Measure>]
+type EUR
 
-let c = {Id=3; IsVip=true;Credit=100M}
+[<Measure>]
+type USD
+
+type Notifications = 
+| NoNotifications
+| ReceiveNotifications of receiveDeals : bool * receiveAlerts : bool
+
+type PersonalDetails = {FirstName : string; LastName : string; DateOfBirth:DateTime}
+
+type Customer = { 
+    Id : int
+    IsVip : bool
+    Credit : decimal<USD>
+    PersonalDetails : PersonalDetails option
+    Notifications : Notifications
+    }
+
 
 let getPurchases c = 
     if c.Id % 2 = 0 then (c, 120M)
@@ -15,7 +33,7 @@ let tryPromoteToVip purchases =
 
 
 let increaseCredit condition customer = 
-    let c = (if condition customer then 100M else 50M) 
+    let c = (if condition customer then 100M<USD> else 50M<USD>) 
     {customer with Credit = customer.Credit + c}
 
 let increaseCreditOnCustomerIfVip = increaseCredit (fun c->c.IsVip)
@@ -25,3 +43,15 @@ let upgradeCustomer =
      getPurchases 
     >> tryPromoteToVip 
     >> increaseCreditOnCustomerIfVip
+
+
+let isAdult c = 
+    match c.PersonalDetails with
+    | None -> false
+    | Some value -> value.DateOfBirth.Date >= (DateTime.Now.AddYears -18).Date
+
+let getAlert customer = 
+    match customer.Notifications with
+    | ReceiveNotifications (receiveAlerts=true)->  sprintf "%d" customer.Id
+    | _ -> ""
+    
