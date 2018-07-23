@@ -6,13 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Work.fs" />
-    <Compile Include="Playground.fsx" />
+    <Compile Include="Tests.fs" />
     <Compile Include="Program.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\inter\inter.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -21,6 +16,10 @@
     <PackageReference Include="Unquote" Version="4.0.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\workImplementation\workImplementation.fsproj" />
   </ItemGroup>
 
 </Project>

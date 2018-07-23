@@ -1,5 +1,12 @@
 module Work
 open System
+open FSharp.Data
+
+[<Literal>]
+let file = """C:\Users\Krzysztof.Kroczak\Documents\Data.json"""
+
+type Json = JsonProvider<file>
+
 
 [<Measure>]
 type EUR
@@ -23,8 +30,12 @@ type Customer = {
 
 
 let getPurchases c = 
-    if c.Id % 2 = 0 then (c, 120M)
-    else (c, 80M)
+    let purchases = 
+        Json.Load file
+        |> Seq.filter (fun x-> x.CustomerId = c.Id)
+        |> Seq.collect (fun x->x.PurchasesByMonth)
+        |> Seq.average
+    (c, purchases)
 
 let tryPromoteToVip purchases = 
     let customer, amount = purchases
@@ -55,3 +66,9 @@ let getAlert customer =
     | ReceiveNotifications (receiveAlerts=true)->  sprintf "%d" customer.Id
     | _ -> ""
     
+
+
+let getCustomer id = {Id=id; IsVip = false; Credit=10M<USD>; PersonalDetails=None; Notifications=NoNotifications }
+
+type CustomerService() =
+    member this.UpgradeCustomer id = getCustomer id |> upgradeCustomer
